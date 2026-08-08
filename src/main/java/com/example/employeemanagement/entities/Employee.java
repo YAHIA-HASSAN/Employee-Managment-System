@@ -1,9 +1,13 @@
 package com.example.employeemanagement.entities;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.jspecify.annotations.NonNull;
+
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -14,13 +18,29 @@ import java.util.UUID;
 public class Employee {
 
     private UUID id;
+    @NotNull(message = "First Name Is Required.")
     private String firstName;
+
+    @NotNull(message = "Last Name Is Required.")
     private String lastName;
+
+    @NotNull(message = "E-mail Is Required.")
+    @Email(message = "Invalid E-mail Format")
     private String email;
+
+    @NotNull(message = "Phone Number Is Required.")
+    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid Phone Number Format")
     private String phoneNumber;
+
+    @NotNull(message = "Hire Date Is Required.")
+    @PastOrPresent(message = "Hire Date Must be Past or Present")
     private LocalDate hireDate;
-    private UUID departmentId;
+
+    @NotNull(message = "Position Is Required.")
     private String position;
+
+    private UUID departmentId;
+
 
     @Override
     public boolean equals(Object obj) {
