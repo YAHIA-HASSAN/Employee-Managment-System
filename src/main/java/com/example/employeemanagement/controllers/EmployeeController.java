@@ -1,6 +1,8 @@
 package com.example.employeemanagement.controllers;
 
 import com.example.employeemanagement.entities.Employee;
+import com.example.employeemanagement.shared.CustomResponseException;
+import com.example.employeemanagement.shared.GlobalResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -23,32 +25,35 @@ public class EmployeeController {
 
 
     @PostMapping
-    public ResponseEntity<Employee> createOne(@RequestBody @Valid Employee employee) {
+    public ResponseEntity<GlobalResponse<Employee>> createOne(@RequestBody @Valid Employee employee) {
         employee.setId(UUID.randomUUID());
         employee.setDepartmentId(UUID.randomUUID());
 
         employees.add(employee);
 
-        return new ResponseEntity<Employee>(employee, HttpStatus.CREATED);
+        return new ResponseEntity<>(new GlobalResponse<>(employee), HttpStatus.CREATED);
     }
 
 
     @GetMapping
-    public ResponseEntity<ArrayList<Employee>> findAll() {
-        return new ResponseEntity<ArrayList<Employee>>(employees, HttpStatus.OK);
+    public ResponseEntity<GlobalResponse<ArrayList<Employee>>> findAll() {
+        return new ResponseEntity<>(new GlobalResponse<>(employees), HttpStatus.OK);
     }
 
     @GetMapping("/{employeeID}")
-    public ResponseEntity<Employee> findOne(@PathVariable UUID employeeID) {
+    public ResponseEntity<GlobalResponse<Employee>> findOne(@PathVariable UUID employeeID) {
         Optional<Employee> employee = employees.stream()
                 .filter(emp -> emp.equals(employeeID)).findFirst();
 
-        return employee.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<Employee>(HttpStatus.NOT_FOUND));
+        if (employee.isEmpty()) {
+            throw CustomResponseException.ResourceNotFound("Employee with id " + employeeID + " not found");
+        }
 
+        return new ResponseEntity<>(new GlobalResponse<>(employee.get()), HttpStatus.OK);
     }
 
     @PutMapping("/{employeeID}")
-    public ResponseEntity<Employee> updateOne(
+    public ResponseEntity<GlobalResponse<Employee>> updateOne(
             @PathVariable UUID employeeID,
             @RequestBody Employee newEmployee) {
 
@@ -56,29 +61,29 @@ public class EmployeeController {
         Optional<Employee> existingEmployee = employees.stream()
                 .filter(emp -> emp.equals(employeeID)).findFirst();
 
-        if (existingEmployee.isPresent()) {
-            existingEmployee.get().update(newEmployee);
-            return new ResponseEntity<Employee>(existingEmployee.get(), HttpStatus.OK);
 
+        if (existingEmployee.isEmpty()) {
+            throw CustomResponseException.ResourceNotFound("Employee with id " + employeeID + " not found");
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        existingEmployee.get().update(newEmployee);
+        return new ResponseEntity<>(new GlobalResponse<>(existingEmployee.get()), HttpStatus.OK);
+
     }
 
 
     @DeleteMapping("/{employeeID}")
-    public ResponseEntity<Void> deleteOne(@PathVariable UUID employeeID) {
+    public ResponseEntity<GlobalResponse> deleteOne(@PathVariable UUID employeeID) {
         Optional<Employee> employee = employees.stream()
                 .filter(emp -> emp.equals(employeeID)).findFirst();
 
-        try {
-            if (employee.isPresent()) {
-                employees.remove(employee.get());
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        if (employee.isEmpty()) {
+            throw CustomResponseException.ResourceNotFound("Employee with id " + employeeID + " not found");
         }
+
+        employees.remove(employee.get());
+
+        return ResponseEntity.noContent().build();
     }
 
 
