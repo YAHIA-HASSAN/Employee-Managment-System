@@ -1,6 +1,8 @@
 package com.example.employeemanagement.services;
 
 import com.example.employeemanagement.abstracts.EmployeeService;
+import com.example.employeemanagement.dtos.EmployeeCreate;
+import com.example.employeemanagement.dtos.EmployeeUpdate;
 import com.example.employeemanagement.entities.Employee;
 import com.example.employeemanagement.shared.CustomResponseException;
 import org.springframework.stereotype.Service;
@@ -15,7 +17,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     ArrayList<Employee> employees = new ArrayList<>();
 
     @Override
-    public ArrayList<Employee> findAll(){
+    public ArrayList<Employee> findAll() {
         return employees;
     }
 
@@ -31,17 +33,24 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee createOne(Employee employee) {
+    public Employee createOne(EmployeeCreate employeeCreate) {
 
-        employee.setId(UUID.randomUUID());
-        employee.setDepartmentId(UUID.randomUUID());
+        employees.add(new Employee(
+                UUID.randomUUID(),
+                employeeCreate.firstName(),
+                employeeCreate.lastName(),
+                employeeCreate.email(),
+                employeeCreate.phoneNumber(),
+                employeeCreate.hireDate(),
+                employeeCreate.position(),
+                UUID.randomUUID()
+        ));
 
-        employees.add(employee);
         return employees.getLast();
     }
 
     @Override
-    public Employee updateOne(UUID employeeID, Employee newEmployee){
+    public Employee updateOne(UUID employeeID, EmployeeUpdate newEmployee) {
         Optional<Employee> existingEmployee = employees.stream()
                 .filter(emp -> emp.equals(employeeID)).findFirst();
 
@@ -55,7 +64,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-  public void  deleteOne(UUID employeeID){
+    public void deleteOne(UUID employeeID) {
         Optional<Employee> employee = employees.stream()
                 .filter(emp -> emp.equals(employeeID)).findFirst();
 

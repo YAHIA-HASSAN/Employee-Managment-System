@@ -1,6 +1,8 @@
 package com.example.employeemanagement.controllers;
 
 import com.example.employeemanagement.abstracts.EmployeeService;
+import com.example.employeemanagement.dtos.EmployeeCreate;
+import com.example.employeemanagement.dtos.EmployeeUpdate;
 import com.example.employeemanagement.entities.Employee;
 import com.example.employeemanagement.shared.CustomResponseException;
 import com.example.employeemanagement.shared.GlobalResponse;
@@ -27,7 +29,7 @@ public class EmployeeController {
 
 
     @PostMapping
-    public ResponseEntity<GlobalResponse<Employee>> createOne(@RequestBody @Valid Employee employee) {
+    public ResponseEntity<GlobalResponse<Employee>> createOne(@RequestBody @Valid EmployeeCreate employee) {
         Employee returnEmployee = employeeService.createOne(employee);
         return new ResponseEntity<>(new GlobalResponse<>(returnEmployee), HttpStatus.CREATED);
     }
@@ -48,9 +50,9 @@ public class EmployeeController {
     @PutMapping("/{employeeID}")
     public ResponseEntity<GlobalResponse<Employee>> updateOne(
             @PathVariable UUID employeeID,
-            @RequestBody Employee newEmployee) {
+            @RequestBody EmployeeUpdate newEmployeeData) {
         return new ResponseEntity<>(
-                new GlobalResponse<>(employeeService.updateOne(employeeID, newEmployee)),
+                new GlobalResponse<>(employeeService.updateOne(employeeID, newEmployeeData)),
                 HttpStatus.OK
         );
 
