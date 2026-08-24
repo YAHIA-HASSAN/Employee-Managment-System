@@ -1,17 +1,13 @@
 package com.example.employeemanagement.entities;
 
 import com.example.employeemanagement.dtos.EmployeeUpdate;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
-import org.springframework.data.annotation.Id;
 
 
 import java.time.LocalDate;
@@ -48,7 +44,7 @@ public class Employee {
     @Column(name = "position", nullable = false)
     private String position;
 
-    @Column(name = "position", nullable = false)
+    @Column(name = "department_id", nullable = false)
     private UUID departmentId = UUID.randomUUID();
 
 
