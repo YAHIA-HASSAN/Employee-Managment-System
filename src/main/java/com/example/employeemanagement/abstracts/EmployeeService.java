@@ -5,10 +5,11 @@ import com.example.employeemanagement.dtos.EmployeeUpdate;
 import com.example.employeemanagement.entities.Employee;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public interface EmployeeService {
-    ArrayList<Employee> findAll();
+    List<Employee> findAll();
 
     Employee findOne(UUID employeeID);
 

@@ -11,6 +11,7 @@ import org.hibernate.annotations.UuidGenerator;
 
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -47,6 +48,24 @@ public class Employee {
     @Column(name = "department_id", nullable = false)
     private UUID departmentId = UUID.randomUUID();
 
+
+    public Employee(
+            String firstName,
+            String lastName,
+            String email,
+            String phoneNumber,
+            LocalDate hireDate,
+            String position) {
+
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.hireDate = hireDate;
+        this.position = position;
+
+
+    }
 
     @Override
     public boolean equals(Object obj) {
