@@ -1,32 +1,55 @@
 package com.example.employeemanagement.entities;
 
 import com.example.employeemanagement.dtos.EmployeeUpdate;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Pattern;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
+import org.springframework.data.annotation.Id;
 
 
 import java.time.LocalDate;
 import java.util.UUID;
 
+@Entity
+@Table(name = "employees")
 @Setter
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Employee {
 
+    @Id
+    @GeneratedValue(generator = "UUID")
+    @UuidGenerator
     private UUID id;
+
+    @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;
+
+    @Column(name = "last_name", nullable = false, length = 100)
     private String lastName;
+
+    @Column(name = "email", nullable = false, length = 200, unique = true)
     private String email;
+
+    @Column(name = "phone_number", length = 20)
     private String phoneNumber;
+
+    @Column(name = "hire_date", nullable = false)
     private LocalDate hireDate;
+
+    @Column(name = "position", nullable = false)
     private String position;
-    private UUID departmentId;
+
+    @Column(name = "position", nullable = false)
+    private UUID departmentId = UUID.randomUUID();
 
 
     @Override
