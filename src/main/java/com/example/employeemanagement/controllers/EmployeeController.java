@@ -4,21 +4,15 @@ import com.example.employeemanagement.abstracts.EmployeeService;
 import com.example.employeemanagement.dtos.EmployeeCreate;
 import com.example.employeemanagement.dtos.EmployeeUpdate;
 import com.example.employeemanagement.entities.Employee;
-import com.example.employeemanagement.shared.CustomResponseException;
 import com.example.employeemanagement.shared.GlobalResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.net.ssl.SSLEngineResult;
-import java.time.LocalDate;
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
