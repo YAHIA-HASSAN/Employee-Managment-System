@@ -6,6 +6,7 @@ import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public record EmployeeCreate(
 
@@ -28,7 +29,10 @@ public record EmployeeCreate(
         LocalDate hireDate,
 
         @NotNull(message = "Position Is Required.")
-        String position
+        String position,
+
+        @NotNull(message = "Department ID Is Required")
+        UUID departmentId
 
 ) {
 }

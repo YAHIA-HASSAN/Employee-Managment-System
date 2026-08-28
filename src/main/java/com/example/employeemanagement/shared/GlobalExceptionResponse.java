@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.coyote.Response;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -39,11 +40,38 @@ public class GlobalExceptionResponse {
         return new ResponseEntity<>(new GlobalResponse<>(errors), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleException(Exception ex) {
-        var errors = List.of("Internal Server Error");
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<GlobalResponse<?>> handleDataIntegrityViolation(
+            DataIntegrityViolationException ex) {
+
+        String message = "Data already exists";
+
+        Throwable cause = ex;
+
+        while (cause.getCause() != null) {
+            cause = cause.getCause();
+        }
+
+        if (cause instanceof org.postgresql.util.PSQLException psqlException) {
+
+            var serverError = psqlException.getServerErrorMessage();
+
+            if (serverError != null) {
+                String constraint = serverError.getConstraint();
+
+                if ("employees_email_key".equals(constraint)) {
+                    message = "An employee with this email already exists";
+                }
+            }
+        }
+
+        var errors = List.of(
+                new GlobalResponse.ErrorItem(message)
+        );
+
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .status(HttpStatus.CONFLICT)
                 .body(new GlobalResponse<>(errors));
     }
 

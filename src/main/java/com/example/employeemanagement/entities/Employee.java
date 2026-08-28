@@ -1,6 +1,7 @@
 package com.example.employeemanagement.entities;
 
 import com.example.employeemanagement.dtos.EmployeeUpdate;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -45,8 +46,10 @@ public class Employee {
     @Column(name = "position", nullable = false)
     private String position;
 
-    @Column(name = "department_id", nullable = false)
-    private UUID departmentId = UUID.randomUUID();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id", nullable = false)
+    @JsonProperty(value = "departmentId")
+    private Department department;
 
 
     public Employee(
@@ -55,7 +58,8 @@ public class Employee {
             String email,
             String phoneNumber,
             LocalDate hireDate,
-            String position) {
+            String position,
+            Department department) {
 
         this.firstName = firstName;
         this.lastName = lastName;
@@ -63,7 +67,7 @@ public class Employee {
         this.phoneNumber = phoneNumber;
         this.hireDate = hireDate;
         this.position = position;
-
+        this.department = department;
 
     }
 
@@ -80,6 +84,10 @@ public class Employee {
         lastName = !emp.lastName().isEmpty() ? emp.lastName() : lastName;
         phoneNumber = !emp.phoneNumber().isEmpty() ? emp.phoneNumber() : phoneNumber;
         position = !emp.position().isEmpty() ? emp.position() : position;
+    }
+
+    public UUID getDepartment(){
+        return department.getId();
     }
 
 }

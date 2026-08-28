@@ -3,7 +3,9 @@ package com.example.employeemanagement.services;
 import com.example.employeemanagement.abstracts.EmployeeService;
 import com.example.employeemanagement.dtos.EmployeeCreate;
 import com.example.employeemanagement.dtos.EmployeeUpdate;
+import com.example.employeemanagement.entities.Department;
 import com.example.employeemanagement.entities.Employee;
+import com.example.employeemanagement.repositories.DepartmentRepo;
 import com.example.employeemanagement.repositories.EmployeeRepo;
 import com.example.employeemanagement.shared.CustomResponseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     private EmployeeRepo employeeRepo;
+    @Autowired
+    private DepartmentRepo departmentRepo;
 
     @Override
     public List<Employee> findAll() {
@@ -37,13 +41,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee createOne(EmployeeCreate employeeCreate) {
 
+        Optional<Department> department = departmentRepo.findById(employeeCreate.departmentId());
+        if(department.isEmpty()){
+            throw CustomResponseException.ResourceNotFound("Department with id "+ employeeCreate.departmentId()+" not found");
+        }
+
         Employee employee = new Employee(
                 employeeCreate.firstName(),
                 employeeCreate.lastName(),
                 employeeCreate.email(),
                 employeeCreate.phoneNumber(),
                 employeeCreate.hireDate(),
-                employeeCreate.position()
+                employeeCreate.position(),
+                department.get()
         );
 
         employeeRepo.save(employee);
